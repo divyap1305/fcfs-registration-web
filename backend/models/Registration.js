@@ -1,29 +1,15 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto');
+const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 const RegistrationSchema = new mongoose.Schema(
   {
-    studentName: { type: String, required: true, trim: true },
-    rollNumber: { type: String, required: true, trim: true },
-    department: { type: String, required: true, trim: true },
-    registrationId: {
-      type: String,
-      required: true,
-      unique: true,
-      default: () => crypto.randomUUID(),
-    },
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
-    timestamp: { type: Date, default: Date.now },
+    studentName: { type: String, required: true },
+    rollNumber: { type: String, required: true },
+    department: { type: String, required: true },
+    registrationId: { type: String, default: uuidv4 },
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true }
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { timestamps: true }
 );
 
-// Optional index to speed lookups per event
-RegistrationSchema.index({ eventId: 1, rollNumber: 1 });
-
-module.exports = {
-  Registration: mongoose.model('Registration', RegistrationSchema),
-};
+module.exports = mongoose.model("Registration", RegistrationSchema);

@@ -1,30 +1,15 @@
-const mongoose = require('mongoose');
-
-const EVENT_STATUS = {
-  ACTIVE: 'ACTIVE',
-  CLOSED: 'CLOSED',
-};
+const mongoose = require("mongoose");
 
 const EventSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, trim: true },
-    description: { type: String, default: '', trim: true },
+    title: { type: String, required: true },
+    description: { type: String, default: "" },
     eventDate: { type: Date, required: true },
-    maxCount: { type: Number, required: true, min: 1 },
-    currentCount: { type: Number, default: 0, min: 0 },
-    status: {
-      type: String,
-      enum: [EVENT_STATUS.ACTIVE, EVENT_STATUS.CLOSED],
-      default: EVENT_STATUS.ACTIVE,
-    },
+    maxCount: { type: Number, required: true },
+    currentCount: { type: Number, default: 0 },
+    status: { type: String, enum: ["ACTIVE", "CLOSED"], default: "ACTIVE" }
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { timestamps: true }
 );
 
-module.exports = {
-  Event: mongoose.model('Event', EventSchema),
-  EVENT_STATUS,
-};
+module.exports = mongoose.model("Event", EventSchema);

@@ -1,15 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-async function connectDB(uri) {
-  if (!uri) {
-    throw new Error('Missing MONGO_URI. Please set environment variable.');
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("DB Error:", err);
+    process.exit(1);
   }
-  mongoose.set('strictQuery', true);
-  await mongoose.connect(uri, {
-    serverSelectionTimeoutMS: 5000,
-    dbName: process.env.DB_NAME || undefined,
-  });
-  return mongoose.connection;
-}
+};
 
-module.exports = { connectDB };
+module.exports = connectDB;

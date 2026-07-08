@@ -22,6 +22,19 @@ exports.createEvent = async (req, res) => {
   }
 };
 
+// ⭐ GET SINGLE EVENT (IMPORTANT – YOU MISSED THIS)
+exports.getSingleEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+    return res.json(event);
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error fetching event" });
+  }
+};
+
 // EDIT EVENT
 exports.editEvent = async (req, res) => {
   try {
@@ -62,7 +75,7 @@ exports.getAllEvents = async (req, res) => {
   }
 };
 
-// REGISTER STUDENT
+// REGISTER STUDENT (WITH DUPLICATE PREVENTION)
 exports.registerToEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -74,7 +87,17 @@ exports.registerToEvent = async (req, res) => {
       return res.status(404).json({ success: false, message: "Event not found" });
 
     if (event.currentCount >= event.maxCount)
-      return res.status(400).json({ success: false, message: "Slots full" });
+      return res.status(400).json({ success: false, message: "Slots are full" });
+
+    // PREVENT DUPLICATE
+    const existing = await Registration.findOne({ eventId, rollNumber });
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already registered for this event",
+      });
+    }
 
     await Registration.create({
       studentName,
@@ -114,7 +137,7 @@ exports.exportCSV = async (req, res) => {
     if (entries.length === 0)
       return res.status(400).json({ success: false, message: "No registrations found" });
 
-    const fields = ["studentName", "rollNumber", "department", "registrationId", "createdAt"];
+    const fields = ["studentName", "rollNumber", "department", "createdAt"];
     const parser = new Parser({ fields });
     const csv = parser.parse(entries);
 

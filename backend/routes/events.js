@@ -1,15 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const controller = require("../controllers/eventsController");
+const router = require("express").Router();
+const ctrl = require("../controllers/eventsController");
 
-router.post("/events", controller.createEvent);
-router.put("/events/:id", controller.editEvent);
-router.delete("/events/:id", controller.deleteEvent);
+// EVENTS
+router.get("/", ctrl.getAllEvents);
+router.get("/:id", ctrl.getSingleEvent);
+router.post("/", ctrl.createEvent);
+router.put("/:id", ctrl.editEvent);
+router.delete("/:id", ctrl.deleteEvent);
 
-router.get("/events", controller.getAllEvents);
-router.post("/events/:id/register", controller.registerToEvent);
+// REGISTRATIONS
+router.post("/:id/register", ctrl.registerToEvent);
+router.get("/:id/registrations", ctrl.getRegistrations);
 
-router.get("/events/:id/registrations", controller.getRegistrations);
-router.get("/events/:id/export", controller.exportCSV);
+// CSV EXPORT
+router.get("/:id/export", ctrl.exportCSV);
 
 module.exports = router;
